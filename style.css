@@ -65,12 +65,12 @@ body {
 }
 
 .logo-medium {
-    max-width: 150px;
+    max-width: 300px;
     height: auto;
 }
 
 .logo-large {
-    max-width: 200px;
+    max-width: 350px;
     height: auto;
 }
 
@@ -208,4 +208,3 @@ form {
     font-size: 0.8rem;
     color: #666;
 }
-
