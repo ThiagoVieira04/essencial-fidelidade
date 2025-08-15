@@ -1,0 +1,89 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartão Fidelidade - Essencial Saúde e Estética</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#E8F5E9"/>
+</head>
+<body>
+
+    <div id="app">
+        <!-- Tela de Cadastro -->
+        <div id="signup-screen" class="screen">
+            <header class="app-header">
+                <img src="/shirley logo (1).png" alt="Logo Essencial Saúde e Estética" class="logo-medium">
+                <h1>Bem-vinda ao Essencial Saúde e Estética</h1>
+            </header>
+            <main>
+                <form id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-name">Nome</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-phone">Celular</label>
+                        <input type="tel" id="signup-phone" required placeholder="(21) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Senha</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <button type="submit" class="btn">Cadastrar</button>
+                </form>
+                <p class="switch-screen-link">Já tem uma conta? <a href="#" id="goto-login">Faça o login</a></p>
+            </main>
+        </div>
+
+        <!-- Tela de Login -->
+        <div id="login-screen" class="screen active">
+            <header class="app-header">
+                <img src="/shirley logo (1).png" alt="Logo Essencial Saúde e Estética" class="logo-medium">
+            </header>
+            <main>
+                <form id="login-form">
+                     <div class="form-group">
+                        <label for="login-user">Usuário (Celular)</label>
+                        <input type="tel" id="login-user" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Senha</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn">Entrar</button>
+                </form>
+                <p class="switch-screen-link">Não tem uma conta? <a href="#" id="goto-signup">Cadastre-se</a></p>
+            </main>
+        </div>
+
+        <!-- Tela do Cartão Fidelidade -->
+        <div id="card-screen" class="screen">
+            <header class="app-header">
+                <img src="/shirley logo (1).png" alt="Logo Essencial Saúde e Estética" class="logo-large">
+                <h2 id="welcome-user"></h2>
+            </header>
+            <main>
+                <div id="stamp-card">
+                    <!-- Selos serão gerados pelo JS -->
+                </div>
+                <div id="prize-message" class="hidden">
+                    <p>Parabéns, você acaba de ganhar um prêmio!</p>
+                    <button id="redeem-prize" class="btn">Resgatar Prêmio</button>
+                </div>
+                <div id="admin-controls" class="hidden">
+                    <button id="add-stamp-btn" class="btn btn-secondary">Adicionar Selo</button>
+                </div>
+                 <button id="logout-btn" class="btn btn-link">Sair</button>
+            </main>
+        </div>
+
+    </div>
+
+    <footer class="app-footer">
+        <p>Desenvolvido por Thiago Samuel — WhatsApp: 21 98717-2463</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
