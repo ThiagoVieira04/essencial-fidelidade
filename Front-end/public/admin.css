@@ -308,6 +308,38 @@
   box-sizing: border-box;
 }
 
+/* Password Input Container */
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-container input {
+  padding-right: 3rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1.2rem;
+  color: #6c757d;
+  transition: color 0.3s;
+}
+
+.password-toggle:hover {
+  color: var(--primary-green);
+}
+
+.eye-icon {
+  display: inline-block;
+  user-select: none;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;

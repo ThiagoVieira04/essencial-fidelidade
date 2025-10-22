@@ -32,6 +32,7 @@ class AdminManagerSupabase {
     this.removeStampBtn = document.getElementById('remove-stamp');
     this.resetStampsBtn = document.getElementById('reset-stamps');
     this.cancelClientBtn = document.getElementById('cancel-client');
+    this.togglePasswordBtn = document.getElementById('toggle-password');
   }
 
   bindEvents() {
@@ -50,6 +51,8 @@ class AdminManagerSupabase {
     this.addStampBtn.addEventListener('click', () => this.addStamp());
     this.removeStampBtn.addEventListener('click', () => this.removeStamp());
     this.resetStampsBtn.addEventListener('click', () => this.resetStamps());
+    
+    this.togglePasswordBtn.addEventListener('click', () => this.togglePasswordVisibility());
     
     window.addEventListener('click', (e) => {
       if (e.target === this.clientModal) this.closeClientModal();
@@ -193,6 +196,24 @@ class AdminManagerSupabase {
   closeClientModal() {
     this.clientModal.style.display = 'none';
     this.clientForm.reset();
+    // Reset password visibility
+    const passwordInput = document.getElementById('client-password');
+    const eyeIcon = document.querySelector('.eye-icon');
+    passwordInput.type = 'password';
+    eyeIcon.textContent = '👁️';
+  }
+
+  togglePasswordVisibility() {
+    const passwordInput = document.getElementById('client-password');
+    const eyeIcon = document.querySelector('.eye-icon');
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeIcon.textContent = '🙈';
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.textContent = '👁️';
+    }
   }
 
   async handleClientSubmit(e) {
