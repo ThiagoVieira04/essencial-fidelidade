@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.essencial.fidelidade" version="1.0.0" xmlns="http://www.w3.org/ns/widgets">
+    <name>Essencial Fidelidade</name>
+    <description>Cartão Fidelidade Digital</description>
+    <author email="contato@essencial.com">Essencial Saúde</author>
+    <content src="index.html" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
+    <allow-navigation href="*" />
+    <allow-intent href="*" />
+</widget>

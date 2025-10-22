@@ -1,0 +1,17 @@
+{
+  "appId": "com.essencial.fidelidade",
+  "appName": "Essencial Fidelidade",
+  "webDir": "Front-end/public",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#006400",
+      "showSpinner": false
+    }
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true
+  }
+}

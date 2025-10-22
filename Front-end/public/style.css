@@ -1,0 +1,207 @@
+:root {
+    --primary-green: #006400;
+    --dark-green: #3a7a44;
+    --light-green: #e6f5e6;
+    --gray-border: #ccc;
+    --text-color: #333;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+#app {
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    max-width: 200px;
+    height: auto;
+}
+
+.view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1, h2, h3 {
+    color: var(--primary-green);
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 350px;
+}
+
+input {
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid var(--gray-border);
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+button {
+    padding: 12px;
+    background-color: var(--dark-green);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: var(--primary-green);
+}
+
+p {
+    text-align: center;
+    margin-top: 15px;
+}
+
+a {
+    color: var(--dark-green);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.card-header h2 {
+    margin: 0;
+}
+
+#logout-button, #admin-logout-button {
+    background-color: #d9534f;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+.stamp-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.stamp {
+    aspect-ratio: 1 / 1;
+    border: 2px dashed var(--gray-border);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.6rem;
+    text-align: center;
+    padding: 5px;
+    box-sizing: border-box;
+    word-break: break-word;
+}
+
+.stamp.filled {
+    background-color: var(--light-green);
+    border-style: solid;
+    border-color: var(--dark-green);
+    font-weight: bold;
+    color: var(--primary-green);
+}
+
+#add-stamp-button {
+    width: 100%;
+    max-width: 350px;
+}
+
+#reward-message {
+    color: var(--primary-green);
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 20px;
+}
+
+/* Admin View */
+#user-list {
+    width: 100%;
+}
+
+.user-card {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.user-card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--primary-green);
+}
+
+.user-card p {
+    margin: 5px 0;
+    text-align: left;
+}
+
+.user-card button {
+    background-color: #f0ad4e;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+
+.admin-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-green);
+    color: white !important;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.admin-link:hover {
+    background-color: var(--dark-green);
+}
+
+@media (max-width: 400px) {
+    .stamp-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
