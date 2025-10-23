@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Essencial Fidelidade</title>
+
+  <!-- Manifest PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#006400" />
+
+  <!-- Supabase SDK -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Cartão Fidelidade</h1>
+    </header>
+
+    <div class="view" id="login-view">
+      <img src="assets/logo.png" alt="" class="logo" />
+      <h2>Login</h2>
+      <form id="login-form">
+        <input type="text" placeholder="Nome" required />
+        <input type="password" placeholder="Senha" required />
+        <button type="submit">Entrar</button>
+      </form>
+      <p>Não tem conta? <a href="#" id="go-to-register">Cadastre-se</a></p>
+      <p><a href="admin.html" class="admin-link">Área Administrativa</a></p>
+    </div>
+
+    <div class="view" id="register-view" style="display: none;">
+      <h2>Cadastro</h2>
+      <form id="register-form">
+        <input type="text" placeholder="Nome" required />
+        <input type="tel" placeholder="Celular" required />
+        <input type="password" placeholder="Senha" required />
+        <button type="submit">Cadastrar</button>
+      </form>
+      <p>Já tem conta? <a href="#" id="go-to-login">Entrar</a></p>
+    </div>
+
+    <div class="view" id="card-view" style="display: none;">
+      <div class="card-header">
+        <img src="assets/logo.png" alt="" class="logo" />
+        <h2>Olá, <span id="user-name"></span></h2>
+        <button id="logout-button">Sair</button>
+      </div>
+      <div class="stamp-grid" id="stamp-grid"></div>
+      <div id="reward-message" class="reward-notification" style="display: none;">
+        <span class="reward-text" id="reward-text">🎉 Parabéns, você ganhou um brinde!</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script-supabase.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "essencial-fidelidade",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo 'Build completed'",
+    "android": "npx cap run android",
+    "sync": "npx cap sync",
+    "build-apk": "npx cap sync && npx cap copy && cd android && gradlew assembleRelease",
+    "install-deps": "npm install && npx cap add android"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.0.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@capacitor/android": "^5.0.0",
+    "@capacitor/core": "^5.0.0"
+  }
+}

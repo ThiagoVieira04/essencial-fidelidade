@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Essencial Fidelidade</string>
+    <string name="title_activity_main">Essencial Fidelidade</string>
+    <string name="package_name">com.essencial.fidelidade</string>
+    <string name="custom_url_scheme">com.essencial.fidelidade</string>
+</resources>
