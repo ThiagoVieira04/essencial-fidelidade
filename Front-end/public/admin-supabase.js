@@ -212,26 +212,26 @@ class AdminManagerSupabase {
     this.clientForm.reset();
     // Reset password visibility
     const passwordInput = document.getElementById('client-password');
-    const eyeIcon = document.querySelector('#toggle-password .eye-icon');
-    const toggleBtn = document.getElementById('toggle-password');
-    passwordInput.type = 'password';
-    eyeIcon.textContent = '👁️';
-    toggleBtn.setAttribute('aria-label', 'Mostrar senha');
+    if (passwordInput && this.togglePasswordBtn) {
+      const eyeIcon = this.togglePasswordBtn.querySelector('.eye-icon');
+      passwordInput.type = 'password';
+      eyeIcon.textContent = '👁️';
+      this.togglePasswordBtn.setAttribute('aria-label', 'Mostrar senha');
+    }
   }
 
   togglePasswordVisibility() {
     const passwordInput = document.getElementById('client-password');
-    const eyeIcon = document.querySelector('#toggle-password .eye-icon');
-    const toggleBtn = document.getElementById('toggle-password');
+    const eyeIcon = this.togglePasswordBtn.querySelector('.eye-icon');
     
     if (passwordInput.type === 'password') {
       passwordInput.type = 'text';
       eyeIcon.textContent = '🙈';
-      toggleBtn.setAttribute('aria-label', 'Ocultar senha');
+      this.togglePasswordBtn.setAttribute('aria-label', 'Ocultar senha');
     } else {
       passwordInput.type = 'password';
       eyeIcon.textContent = '👁️';
-      toggleBtn.setAttribute('aria-label', 'Mostrar senha');
+      this.togglePasswordBtn.setAttribute('aria-label', 'Mostrar senha');
     }
   }
 

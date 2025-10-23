@@ -176,36 +176,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     logoutButton.addEventListener('click', logout);
     if (addStampButton) addStampButton.addEventListener('click', addStamp);
 
-    // Toggle password visibility
+    // Toggle password visibility - Login
     const toggleLoginPassword = document.getElementById('toggle-login-password');
-    const toggleRegisterPassword = document.getElementById('toggle-register-password');
     
     if (toggleLoginPassword) {
-        toggleLoginPassword.addEventListener('click', () => {
-            const passwordInput = loginForm.querySelector('input[type="password"], input[type="text"]');
+        toggleLoginPassword.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const passwordInput = toggleLoginPassword.parentElement.querySelector('input[type="password"], input[type="text"]');
             const eyeIcon = toggleLoginPassword.querySelector('.eye-icon');
             
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.textContent = '🙈';
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.textContent = '👁️';
+            if (passwordInput && passwordInput.placeholder === 'Senha') {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.textContent = '🙈';
+                    toggleLoginPassword.setAttribute('aria-label', 'Ocultar senha');
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.textContent = '👁️';
+                    toggleLoginPassword.setAttribute('aria-label', 'Mostrar senha');
+                }
             }
         });
     }
+
+    // Toggle password visibility - Cadastro
+    const toggleRegisterPassword = document.getElementById('toggle-register-password');
     
     if (toggleRegisterPassword) {
-        toggleRegisterPassword.addEventListener('click', () => {
-            const passwordInput = registerForm.querySelector('input[type="password"], input[type="text"]');
+        toggleRegisterPassword.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const passwordInput = toggleRegisterPassword.parentElement.querySelector('input[type="password"], input[type="text"]');
             const eyeIcon = toggleRegisterPassword.querySelector('.eye-icon');
             
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.textContent = '🙈';
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.textContent = '👁️';
+            if (passwordInput && passwordInput.placeholder === 'Senha') {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.textContent = '🙈';
+                    toggleRegisterPassword.setAttribute('aria-label', 'Ocultar senha');
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.textContent = '👁️';
+                    toggleRegisterPassword.setAttribute('aria-label', 'Mostrar senha');
+                }
             }
         });
     }

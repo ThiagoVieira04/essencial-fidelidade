@@ -199,6 +199,37 @@ a {
     background-color: var(--dark-green);
 }
 
+.password-input-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.password-input-container input {
+    padding-right: 45px;
+    margin-bottom: 0;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none !important;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 1.2rem;
+    color: var(--gray-border);
+    transition: color 0.3s;
+    z-index: 10;
+}
+
+.password-toggle:hover {
+    color: var(--dark-green);
+    background: none !important;
+}
+
 @media (max-width: 400px) {
     .stamp-grid {
         grid-template-columns: repeat(2, 1fr);
