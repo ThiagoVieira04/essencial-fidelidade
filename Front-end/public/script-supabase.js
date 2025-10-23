@@ -174,7 +174,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     logoutButton.addEventListener('click', logout);
-    addStampButton.addEventListener('click', addStamp);
+    if (addStampButton) addStampButton.addEventListener('click', addStamp);
+
+    // Toggle password visibility
+    const toggleLoginPassword = document.getElementById('toggle-login-password');
+    const toggleRegisterPassword = document.getElementById('toggle-register-password');
+    
+    if (toggleLoginPassword) {
+        toggleLoginPassword.addEventListener('click', () => {
+            const passwordInput = loginForm.querySelector('input[type="password"], input[type="text"]');
+            const eyeIcon = toggleLoginPassword.querySelector('.eye-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = '👁️';
+            }
+        });
+    }
+    
+    if (toggleRegisterPassword) {
+        toggleRegisterPassword.addEventListener('click', () => {
+            const passwordInput = registerForm.querySelector('input[type="password"], input[type="text"]');
+            const eyeIcon = toggleRegisterPassword.querySelector('.eye-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = '👁️';
+            }
+        });
+    }
 
     await init();
 });

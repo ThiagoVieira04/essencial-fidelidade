@@ -22,7 +22,12 @@
       </header>
       <form id="admin-login-form">
         <input type="text" id="admin-username" placeholder="Usuário" required />
-        <input type="password" id="admin-password" placeholder="Senha" required />
+        <div class="password-input-container">
+          <input type="password" id="admin-password" placeholder="Senha" required />
+          <button type="button" class="password-toggle" id="toggle-login-password" aria-label="Mostrar senha">
+            <span class="eye-icon">👁️</span>
+          </button>
+        </div>
         <button type="submit">Entrar</button>
       </form>
       <p><a href="index.html">← Voltar ao site</a></p>
@@ -110,7 +115,7 @@
             <label for="client-password">Senha *</label>
             <div class="password-input-container">
               <input type="password" id="client-password" required />
-              <button type="button" class="password-toggle" id="toggle-password">
+              <button type="button" class="password-toggle" id="toggle-password" aria-label="Mostrar senha">
                 <span class="eye-icon">👁️</span>
               </button>
             </div>

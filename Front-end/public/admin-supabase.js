@@ -33,6 +33,7 @@ class AdminManagerSupabase {
     this.resetStampsBtn = document.getElementById('reset-stamps');
     this.cancelClientBtn = document.getElementById('cancel-client');
     this.togglePasswordBtn = document.getElementById('toggle-password');
+    this.toggleLoginPasswordBtn = document.getElementById('toggle-login-password');
   }
 
   bindEvents() {
@@ -48,11 +49,24 @@ class AdminManagerSupabase {
     this.clientSearch.addEventListener('input', (e) => this.filterClients(e.target.value));
     this.clientsList.addEventListener('click', (e) => this.handleClientAction(e));
     this.clientSelect.addEventListener('change', (e) => this.selectClientForStamps(e.target.value));
-    this.addStampBtn.addEventListener('click', () => this.addStamp());
-    this.removeStampBtn.addEventListener('click', () => this.removeStamp());
-    this.resetStampsBtn.addEventListener('click', () => this.resetStamps());
     
-    this.togglePasswordBtn.addEventListener('click', () => this.togglePasswordVisibility());
+    // Event listeners para botões de selos com verificação
+    if (this.addStampBtn) {
+      this.addStampBtn.addEventListener('click', () => this.addStamp());
+    }
+    if (this.removeStampBtn) {
+      this.removeStampBtn.addEventListener('click', () => this.removeStamp());
+    }
+    if (this.resetStampsBtn) {
+      this.resetStampsBtn.addEventListener('click', () => this.resetStamps());
+    }
+    
+    if (this.togglePasswordBtn) {
+      this.togglePasswordBtn.addEventListener('click', () => this.togglePasswordVisibility());
+    }
+    if (this.toggleLoginPasswordBtn) {
+      this.toggleLoginPasswordBtn.addEventListener('click', () => this.toggleLoginPasswordVisibility());
+    }
     
     window.addEventListener('click', (e) => {
       if (e.target === this.clientModal) this.closeClientModal();
@@ -198,21 +212,44 @@ class AdminManagerSupabase {
     this.clientForm.reset();
     // Reset password visibility
     const passwordInput = document.getElementById('client-password');
-    const eyeIcon = document.querySelector('.eye-icon');
+    const eyeIcon = document.querySelector('#toggle-password .eye-icon');
+    const toggleBtn = document.getElementById('toggle-password');
     passwordInput.type = 'password';
     eyeIcon.textContent = '👁️';
+    toggleBtn.setAttribute('aria-label', 'Mostrar senha');
   }
 
   togglePasswordVisibility() {
     const passwordInput = document.getElementById('client-password');
-    const eyeIcon = document.querySelector('.eye-icon');
+    const eyeIcon = document.querySelector('#toggle-password .eye-icon');
+    const toggleBtn = document.getElementById('toggle-password');
     
     if (passwordInput.type === 'password') {
       passwordInput.type = 'text';
       eyeIcon.textContent = '🙈';
+      toggleBtn.setAttribute('aria-label', 'Ocultar senha');
     } else {
       passwordInput.type = 'password';
       eyeIcon.textContent = '👁️';
+      toggleBtn.setAttribute('aria-label', 'Mostrar senha');
+    }
+  }
+
+  // Funcionalidade de mostrar/ocultar limitada apenas ao campo de senha do login admin
+  // Removido do campo usuário por questões de segurança e UX
+  toggleLoginPasswordVisibility() {
+    const passwordInput = document.getElementById('admin-password');
+    const eyeIcon = document.querySelector('#toggle-login-password .eye-icon');
+    const toggleBtn = document.getElementById('toggle-login-password');
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeIcon.textContent = '🙈';
+      toggleBtn.setAttribute('aria-label', 'Ocultar senha');
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.textContent = '👁️';
+      toggleBtn.setAttribute('aria-label', 'Mostrar senha');
     }
   }
 
@@ -335,21 +372,29 @@ class AdminManagerSupabase {
   }
 
   async addStamp() {
-    if (!this.selectedClient) return;
-    
-    const stamps = await Database.getUserStamps(this.selectedClient.id);
-    if (stamps.length >= 10) {
-      alert('Este cliente já possui o cartão completo!');
+    if (!this.selectedClient) {
+      alert('Selecione um cliente primeiro!');
       return;
     }
     
-    await Database.addStamp(this.selectedClient.id, {
-      created_at: new Date().toISOString()
-    });
-    
-    await this.updateStampsDisplay();
-    this.populateClientSelect();
-    alert('Selo adicionado com sucesso!');
+    try {
+      const stamps = await Database.getUserStamps(this.selectedClient.id);
+      if (stamps.length >= 10) {
+        alert('Este cliente já possui o cartão completo!');
+        return;
+      }
+      
+      await Database.addStamp(this.selectedClient.id, {
+        created_at: new Date().toISOString()
+      });
+      
+      await this.updateStampsDisplay();
+      await this.populateClientSelect();
+      alert('Selo adicionado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao adicionar selo:', error);
+      alert('Erro ao adicionar selo: ' + error.message);
+    }
   }
 
   async removeStamp() {

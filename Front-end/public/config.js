@@ -30,11 +30,18 @@ class Database {
   }
 
   static async addStamp(userId, stampData) {
+    console.log('Tentando adicionar selo para usuário:', userId);
     const { data, error } = await supabase.from('stamps').insert([{
       user_id: userId,
       ...stampData
     }]).select();
-    if (error) throw error;
+    
+    if (error) {
+      console.error('Erro detalhado ao adicionar selo:', error);
+      throw new Error(`Erro ao adicionar selo: ${error.message}`);
+    }
+    
+    console.log('Selo adicionado com sucesso:', data);
     return data[0];
   }
 
