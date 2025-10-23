@@ -1,6 +1,9 @@
 class AdminManagerSupabase {
   constructor() {
-    this.ADMIN_CREDENTIALS = { username: 'admin', password: 'admin123' };
+    this.ADMIN_CREDENTIALS = { 
+      username: 'admin', 
+      password: localStorage.getItem('adminPassword') || 'admin123' 
+    };
     this.currentUser = null;
     this.clients = [];
     this.selectedClient = null;
@@ -34,6 +37,10 @@ class AdminManagerSupabase {
     this.cancelClientBtn = document.getElementById('cancel-client');
     this.togglePasswordBtn = document.getElementById('toggle-password');
     this.toggleLoginPasswordBtn = document.getElementById('toggle-login-password');
+    this.changePasswordForm = document.getElementById('change-password-form');
+    this.toggleCurrentPasswordBtn = document.getElementById('toggle-current-password');
+    this.toggleNewPasswordBtn = document.getElementById('toggle-new-password');
+    this.toggleConfirmPasswordBtn = document.getElementById('toggle-confirm-password');
   }
 
   bindEvents() {
@@ -66,6 +73,20 @@ class AdminManagerSupabase {
     }
     if (this.toggleLoginPasswordBtn) {
       this.toggleLoginPasswordBtn.addEventListener('click', () => this.toggleLoginPasswordVisibility());
+    }
+    
+    if (this.changePasswordForm) {
+      this.changePasswordForm.addEventListener('submit', (e) => this.handleChangePassword(e));
+    }
+    
+    if (this.toggleCurrentPasswordBtn) {
+      this.toggleCurrentPasswordBtn.addEventListener('click', () => this.togglePasswordField('current-password', 'toggle-current-password'));
+    }
+    if (this.toggleNewPasswordBtn) {
+      this.toggleNewPasswordBtn.addEventListener('click', () => this.togglePasswordField('new-password', 'toggle-new-password'));
+    }
+    if (this.toggleConfirmPasswordBtn) {
+      this.toggleConfirmPasswordBtn.addEventListener('click', () => this.togglePasswordField('confirm-password', 'toggle-confirm-password'));
     }
     
     window.addEventListener('click', (e) => {
@@ -322,7 +343,12 @@ class AdminManagerSupabase {
   }
 
   async populateClientSelect() {
-    this.clientSelect.innerHTML = '<option value="">Selecione um cliente</option>';
+    this.clientSelect.innerHTML = '';
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Selecione um cliente';
+    this.clientSelect.appendChild(defaultOption);
+    
     for (const client of this.clients) {
       const stamps = await Database.getUserStamps(client.id);
       const option = document.createElement('option');
@@ -333,7 +359,7 @@ class AdminManagerSupabase {
   }
 
   async selectClientForStamps(clientId) {
-    if (!clientId) {
+    if (!clientId || clientId === '') {
       this.stampsManagement.style.display = 'none';
       this.selectedClient = null;
       return;
@@ -424,6 +450,51 @@ class AdminManagerSupabase {
       this.populateClientSelect();
       alert('Cartão resetado com sucesso!');
     }
+  }
+
+  togglePasswordField(inputId, buttonId) {
+    const passwordInput = document.getElementById(inputId);
+    const eyeIcon = document.querySelector(`#${buttonId} .eye-icon`);
+    const toggleBtn = document.getElementById(buttonId);
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeIcon.textContent = '🙈';
+      toggleBtn.setAttribute('aria-label', 'Ocultar senha');
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.textContent = '👁️';
+      toggleBtn.setAttribute('aria-label', 'Mostrar senha');
+    }
+  }
+
+  handleChangePassword(e) {
+    e.preventDefault();
+    
+    const currentPassword = document.getElementById('current-password').value.trim();
+    const newPassword = document.getElementById('new-password').value.trim();
+    const confirmPassword = document.getElementById('confirm-password').value.trim();
+    
+    if (currentPassword !== this.ADMIN_CREDENTIALS.password) {
+      alert('Senha atual incorreta!');
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      alert('A nova senha deve ter pelo menos 6 caracteres!');
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      alert('As senhas não coincidem!');
+      return;
+    }
+    
+    this.ADMIN_CREDENTIALS.password = newPassword;
+    localStorage.setItem('adminPassword', newPassword);
+    
+    this.changePasswordForm.reset();
+    alert('Senha alterada com sucesso!');
   }
 }
 

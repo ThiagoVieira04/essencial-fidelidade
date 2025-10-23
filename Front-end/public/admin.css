@@ -252,8 +252,10 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,0.5);
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding-top: 2rem;
+  overflow-y: auto;
 }
 
 .modal-content {
@@ -263,7 +265,8 @@
   width: 90%;
   max-width: 450px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  margin: 0 auto;
+  margin: 0 auto 2rem auto;
+  position: relative;
 }
 
 .modal-header {
@@ -384,6 +387,42 @@
 #cancel-client {
   background-color: #6c757d;
   color: white;
+}
+
+/* Settings */
+.settings-card {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.settings-card h3 {
+  margin: 0 0 1.5rem 0;
+  color: var(--primary-green);
+  text-align: center;
+}
+
+#change-password-form .form-group {
+  margin-bottom: 1.5rem;
+  padding: 0;
+}
+
+#change-password-form .form-group label {
+  text-align: left;
+  margin-bottom: 0.5rem;
+}
+
+#change-password-form .form-group input {
+  text-align: left;
+}
+
+#change-password-form button[type="submit"] {
+  width: 100%;
+  margin-top: 1rem;
 }
 
 /* Responsive */

@@ -45,6 +45,7 @@
       <nav class="admin-nav">
         <button class="nav-btn active" data-section="clients">Clientes</button>
         <button class="nav-btn" data-section="stamps">Selos</button>
+        <button class="nav-btn" data-section="settings">Configurações</button>
       </nav>
 
       <!-- Seção Clientes -->
@@ -86,6 +87,47 @@
           </div>
 
           <div id="stamps-grid" class="stamps-display"></div>
+        </div>
+      </section>
+
+      <!-- Seção Configurações -->
+      <section id="settings-section" class="admin-section" style="display: none;">
+        <div class="section-header">
+          <h2>Configurações</h2>
+        </div>
+        
+        <div class="settings-card">
+          <h3>Alterar Senha do Administrador</h3>
+          <form id="change-password-form">
+            <div class="form-group">
+              <label for="current-password">Senha Atual *</label>
+              <div class="password-input-container">
+                <input type="password" id="current-password" required />
+                <button type="button" class="password-toggle" id="toggle-current-password" aria-label="Mostrar senha">
+                  <span class="eye-icon">👁️</span>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="new-password">Nova Senha *</label>
+              <div class="password-input-container">
+                <input type="password" id="new-password" required />
+                <button type="button" class="password-toggle" id="toggle-new-password" aria-label="Mostrar senha">
+                  <span class="eye-icon">👁️</span>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="confirm-password">Confirmar Nova Senha *</label>
+              <div class="password-input-container">
+                <input type="password" id="confirm-password" required />
+                <button type="button" class="password-toggle" id="toggle-confirm-password" aria-label="Mostrar senha">
+                  <span class="eye-icon">👁️</span>
+                </button>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">Alterar Senha</button>
+          </form>
         </div>
       </section>
     </div>
