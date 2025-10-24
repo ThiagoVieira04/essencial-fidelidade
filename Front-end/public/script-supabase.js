@@ -91,6 +91,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const renderCardView = async () => {
         try {
+            if (!welcomeMessage || !stampGrid || !rewardMessage) {
+                throw new Error('Elementos não encontrados');
+            }
+            
             welcomeMessage.textContent = currentUser.name;
             userStamps = await Database.getUserStamps(currentUser.id);
             
@@ -112,10 +116,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (stampsCount >= 10) {
-                addStampButton.style.display = 'none';
+                if (addStampButton) addStampButton.style.display = 'none';
                 rewardMessage.style.display = 'block';
             } else {
-                addStampButton.style.display = 'block';
+                if (addStampButton) addStampButton.style.display = 'block';
             }
 
             showView(cardView);
