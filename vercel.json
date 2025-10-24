@@ -1,0 +1,7 @@
+{
+  "buildCommand": null,
+  "outputDirectory": "Front-end/public",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
