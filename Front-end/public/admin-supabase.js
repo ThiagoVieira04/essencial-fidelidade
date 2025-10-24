@@ -69,10 +69,10 @@ class AdminManagerSupabase {
     }
     
     if (this.togglePasswordBtn) {
-      this.togglePasswordBtn.addEventListener('click', () => this.togglePasswordVisibility());
+      this.togglePasswordBtn.addEventListener('touchstart', () => this.togglePasswordVisibility(), { passive: true });
     }
     if (this.toggleLoginPasswordBtn) {
-      this.toggleLoginPasswordBtn.addEventListener('click', () => this.toggleLoginPasswordVisibility());
+      this.toggleLoginPasswordBtn.addEventListener('touchstart', () => this.toggleLoginPasswordVisibility(), { passive: true });
     }
     
     if (this.changePasswordForm) {
@@ -80,13 +80,13 @@ class AdminManagerSupabase {
     }
     
     if (this.toggleCurrentPasswordBtn) {
-      this.toggleCurrentPasswordBtn.addEventListener('click', () => this.togglePasswordField('current-password', 'toggle-current-password'));
+      this.toggleCurrentPasswordBtn.addEventListener('touchstart', () => this.togglePasswordField('current-password', 'toggle-current-password'), { passive: true });
     }
     if (this.toggleNewPasswordBtn) {
-      this.toggleNewPasswordBtn.addEventListener('click', () => this.togglePasswordField('new-password', 'toggle-new-password'));
+      this.toggleNewPasswordBtn.addEventListener('touchstart', () => this.togglePasswordField('new-password', 'toggle-new-password'), { passive: true });
     }
     if (this.toggleConfirmPasswordBtn) {
-      this.toggleConfirmPasswordBtn.addEventListener('click', () => this.togglePasswordField('confirm-password', 'toggle-confirm-password'));
+      this.toggleConfirmPasswordBtn.addEventListener('touchstart', () => this.togglePasswordField('confirm-password', 'toggle-confirm-password'), { passive: true });
     }
     
     window.addEventListener('click', (e) => {

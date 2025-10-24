@@ -180,8 +180,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const toggleLoginPassword = document.getElementById('toggle-login-password');
     
     if (toggleLoginPassword) {
-        toggleLoginPassword.addEventListener('click', function(event) {
-            event.preventDefault();
+        toggleLoginPassword.addEventListener('touchstart', function(event) {
             event.stopPropagation();
             
             const passwordInput = toggleLoginPassword.parentElement.querySelector('input[type="password"], input[type="text"]');
@@ -198,15 +197,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     toggleLoginPassword.setAttribute('aria-label', 'Mostrar senha');
                 }
             }
-        });
+        }, { passive: true });
     }
 
     // Toggle password visibility - Cadastro
     const toggleRegisterPassword = document.getElementById('toggle-register-password');
     
     if (toggleRegisterPassword) {
-        toggleRegisterPassword.addEventListener('click', function(event) {
-            event.preventDefault();
+        toggleRegisterPassword.addEventListener('touchstart', function(event) {
             event.stopPropagation();
             
             const passwordInput = toggleRegisterPassword.parentElement.querySelector('input[type="password"], input[type="text"]');
@@ -223,7 +221,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     toggleRegisterPassword.setAttribute('aria-label', 'Mostrar senha');
                 }
             }
-        });
+        }, { passive: true });
     }
 
     await init();
