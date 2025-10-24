@@ -95,15 +95,21 @@ a {
 
 .card-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 100%;
     margin-bottom: 20px;
+    position: relative;
 }
 
 .card-header h1 {
     margin: 0;
     font-size: 1.5rem;
+}
+
+.card-header button {
+    position: absolute;
+    right: 0;
 }
 
 #card-view .logo {
