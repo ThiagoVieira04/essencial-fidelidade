@@ -14,6 +14,7 @@ Um sistema completo de fidelização digital que permite aos clientes acumular s
 🔒 **Painel Admin**: Gerenciamento completo de clientes e selos  
 ☁️ **Banco Real**: Integração com Supabase (PostgreSQL)  
 🎨 **UI Moderna**: Interface responsiva e intuitiva  
+🌙 **Dark Mode**: Tema claro/escuro com persistência local  
 
 ---
 
@@ -35,6 +36,7 @@ Um sistema completo de fidelização digital que permite aos clientes acumular s
 - ✅ Notificação automática de recompensa
 - ✅ Interface otimizada para mobile
 - ✅ Funciona offline (PWA)
+- ✅ Dark Mode / Light Mode
 
 ### 🔧 **Para Administradores**
 - ✅ Painel administrativo completo
@@ -43,6 +45,7 @@ Um sistema completo de fidelização digital que permite aos clientes acumular s
 - ✅ Resetar cartões de fidelidade
 - ✅ Busca e filtros avançados
 - ✅ Dashboard em tempo real
+- ✅ Dark Mode / Light Mode
 
 ---
 
@@ -59,6 +62,8 @@ essencial-fidelidade/
 │   ├── script-supabase.js      # Lógica do cliente
 │   ├── admin-supabase.js       # Lógica do admin
 │   ├── config.js               # Configurações Supabase
+│   ├── theme.css               # Estilos Dark/Light Mode
+│   ├── theme.js                # Gerenciador de temas
 │   └── assets/                 # Imagens e ícones
 ├── 📦 www/                     # Build para Capacitor
 ├── ⚙️ capacitor.config.json    # Configurações do app
@@ -191,11 +196,11 @@ npx cap build android --prod
 
 ## 📈 **Roadmap**
 
+- [x] 🌙 Modo escuro
 - [ ] 🔔 Notificações push
 - [ ] 📧 Integração com e-mail
 - [ ] 📊 Dashboard de analytics
 - [ ] 🎁 Sistema de cupons
-- [ ] 🌙 Modo escuro
 - [ ] 🌍 Internacionalização
 
 ---
