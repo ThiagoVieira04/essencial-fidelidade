@@ -12,18 +12,18 @@
     --card-hover-shadow: rgba(0, 0, 0, 0.15);
 }
 
-/* Dark Mode */
+/* Dark Mode - WCAG 4.5:1 contrast compliant */
 [data-theme="dark"] {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2d2d2d;
-    --text-primary: #e0e0e0;
-    --text-secondary: #b0b0b0;
-    --border-color: #444;
-    --shadow: rgba(0, 0, 0, 0.3);
-    --input-bg: #3a3a3a;
-    --modal-overlay: rgba(0, 0, 0, 0.7);
-    --card-bg: #2d2d2d;
-    --card-hover-shadow: rgba(0, 0, 0, 0.4);
+    --bg-primary: #0d0d0d;        /* Darker base for better contrast */
+    --bg-secondary: #1e1e1e;      /* Main container surface */
+    --text-primary: #e8e8e8;      /* High contrast text */
+    --text-secondary: #a8a8a8;    /* Secondary text */
+    --border-color: #3a3a3a;      /* Subtle borders */
+    --shadow: rgba(0, 0, 0, 0.5);
+    --input-bg: #2a2a2a;          /* Input fields */
+    --modal-overlay: rgba(0, 0, 0, 0.8);
+    --card-bg: #252525;           /* Cards with clear separation */
+    --card-hover-shadow: rgba(0, 0, 0, 0.6);
 }
 
 /* Theme Toggle Button */
@@ -74,6 +74,12 @@ input, select {
     border-color: var(--border-color);
 }
 
+/* Dark mode cards - improved contrast */
+[data-theme="dark"] .client-card {
+    background-color: #2a2a2a;
+    border-color: #404040;
+}
+
 .client-card:hover {
     box-shadow: 0 4px 8px var(--card-hover-shadow);
 }
@@ -90,17 +96,41 @@ input, select {
     border-color: var(--border-color);
 }
 
+/* Stamp fixes - dates centered within circles */
 .stamp {
     border-color: var(--border-color);
+    padding: 0.2rem;
+    line-height: 1.1;
+    overflow: hidden;
 }
 
 .stamp-slot {
     background-color: var(--card-bg);
     border-color: var(--border-color);
+    padding: 0.2rem;
+    line-height: 1.1;
+    overflow: hidden;
+}
+
+/* Dark mode stamps - improved contrast */
+[data-theme="dark"] .stamp-slot {
+    background-color: #2a2a2a;
+    border-color: #404040;
+}
+
+[data-theme="dark"] .stamp-slot.filled {
+    background-color: #1a3a1a;
+    border-color: #3a7a44;
 }
 
 .stamps-info {
     background-color: var(--card-bg);
+}
+
+/* Dark mode stamps info - better contrast */
+[data-theme="dark"] .stamps-info {
+    background-color: #252525;
+    border: 1px solid #3a3a3a;
 }
 
 .nav-btn {
@@ -111,6 +141,16 @@ input, select {
 
 .nav-btn:hover:not(.active) {
     background-color: var(--input-bg);
+}
+
+/* Dark mode navigation - improved contrast */
+[data-theme="dark"] .nav-btn {
+    background-color: #252525;
+    border-color: #404040;
+}
+
+[data-theme="dark"] .nav-btn:hover:not(.active) {
+    background-color: #2a2a2a;
 }
 
 .admin-header {
