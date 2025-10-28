@@ -13,8 +13,9 @@ body {
     background-color: #f9f9f9;
     color: var(--text-color);
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     min-height: 100vh;
 }
 
@@ -263,6 +264,42 @@ a {
     background: none !important;
 }
 
+/* Footer com créditos - discreto e responsivo */
+.app-footer {
+    width: 100%;
+    text-align: center;
+    padding: 15px 20px;
+    margin-top: 20px;
+}
+
+.app-footer p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.app-footer a {
+    color: #888;
+    text-decoration: none;
+    font-weight: normal;
+    transition: color 0.3s;
+}
+
+.app-footer a:hover {
+    color: var(--dark-green);
+    text-decoration: underline;
+}
+
+/* Dark mode support for footer */
+[data-theme="dark"] .app-footer p,
+[data-theme="dark"] .app-footer a {
+    color: #a8a8a8;
+}
+
+[data-theme="dark"] .app-footer a:hover {
+    color: #3a7a44;
+}
+
 @media (max-width: 400px) {
     .stamp-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -270,5 +307,9 @@ a {
     
     .card-header h1 {
         font-size: 1.5rem;
+    }
+    
+    .app-footer p {
+        font-size: 0.7rem;
     }
 }
