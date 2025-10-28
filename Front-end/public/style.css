@@ -136,19 +136,21 @@ a {
     margin-bottom: 20px;
 }
 
+/* Stamp circle - perfectly centered dates */
 .stamp {
     aspect-ratio: 1 / 1;
     border: 2px dashed var(--gray-border);
     border-radius: 50%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     text-align: center;
-    padding: 5px;
+    padding: 0.3rem;
     box-sizing: border-box;
-    word-break: break-word;
+    line-height: 1.1;
+    overflow: hidden;
+    word-wrap: break-word;
 }
 
 .stamp.filled {
@@ -265,4 +267,3 @@ a {
         grid-template-columns: repeat(2, 1fr);
     }
 }
-

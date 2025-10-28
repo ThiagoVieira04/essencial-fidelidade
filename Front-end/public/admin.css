@@ -256,17 +256,23 @@
   max-width: 500px;
 }
 
+/* Stamp slot - perfectly centered dates */
 .stamp-slot {
   aspect-ratio: 1;
   border: 2px dashed #ccc;
   border-radius: 50%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: clamp(0.65rem, 1.8vw, 0.8rem);
+  align-items: center;
+  font-size: clamp(0.5rem, 1.5vw, 0.65rem);
   text-align: center;
   background-color: #f8f9fa;
   min-height: 50px;
+  padding: 0.3rem;
+  box-sizing: border-box;
+  line-height: 1.1;
+  overflow: hidden;
+  word-wrap: break-word;
 }
 
 .stamp-slot.filled {
@@ -580,7 +586,7 @@
 
   .stamp-slot {
     min-height: 45px;
-    font-size: 0.6rem;
+    font-size: 0.5rem;
   }
 
   .form-actions {
@@ -601,6 +607,6 @@
 
   .stamp-slot {
     min-height: 40px;
-    font-size: 0.55rem;
+    font-size: 0.45rem;
   }
 }
