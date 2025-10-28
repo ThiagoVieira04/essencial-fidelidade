@@ -174,7 +174,7 @@ a:active {
 .stamp-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 18px;
+    gap: 0.75rem;
     width: 100%;
     margin-bottom: 20px;
 }
@@ -349,9 +349,29 @@ a:active {
     color: #3a7a44;
 }
 
+@media (max-width: 420px) {
+    .stamp-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .stamp {
+        min-height: 70px;
+        font-size: 0.55rem;
+        padding: 0.5rem;
+    }
+}
+
 @media (max-width: 400px) {
     .stamp-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.4rem;
+    }
+    
+    .stamp {
+        min-height: 65px;
+        font-size: 0.5rem;
+        padding: 0.4rem;
     }
     
     .card-header h1 {
