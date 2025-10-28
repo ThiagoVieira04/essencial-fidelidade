@@ -1,13 +1,20 @@
-const CACHE_NAME = 'essencial-fidelidade-v1';
+const CACHE_NAME = 'essencial-fidelidade-v2.9';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/admin.html',
   '/style.css',
-  '/script.js',
+  '/admin.css',
+  '/theme.css',
+  '/script-supabase.js',
+  '/admin-supabase.js',
+  '/theme.js',
+  '/config.js',
   '/manifest.json',
-  '/shirley logo (1).png',
-  '/icon-192x192.png',
-  '/icon-512x512.png'
+  '/assets/logo.png',
+  '/assets/shirley logo (1).png',
+  '/assets/icon-192x192.png',
+  '/assets/icon-512x512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -21,15 +28,32 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+  if (event.request.url.includes('supabase.co')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request)
       .then(response => {
         if (response) {
           return response;
         }
-        return fetch(event.request);
-      }
-    )
+        return fetch(event.request).then(fetchResponse => {
+          if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+            return fetchResponse;
+          }
+          const responseToCache = fetchResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+          return fetchResponse;
+        });
+      }).catch(() => {
+        if (event.request.destination === 'document') {
+          return caches.match('/index.html');
+        }
+      })
   );
 });
 
