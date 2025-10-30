@@ -46,6 +46,12 @@ class AdminManagerSupabase {
   bindEvents() {
     this.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
     this.logoutBtn.addEventListener('click', () => this.logout());
+    
+    // Adicionar listener para link "Voltar ao site"
+    const backToSiteLink = document.querySelector('a[href="index.html"]');
+    if (backToSiteLink) {
+      backToSiteLink.addEventListener('click', (e) => this.handleBackToSite(e));
+    }
     this.navButtons.forEach(btn => {
       btn.addEventListener('click', (e) => this.switchSection(e.target.dataset.section));
     });
@@ -158,6 +164,14 @@ class AdminManagerSupabase {
     this.currentUser = null;
     sessionStorage.removeItem('adminUser');
     this.showLogin();
+  }
+
+  handleBackToSite(e) {
+    // Limpar sessão admin antes de navegar
+    this.currentUser = null;
+    sessionStorage.removeItem('adminUser');
+    // Permitir navegação padrão do link
+    // Não precisa e.preventDefault() pois queremos que o link funcione
   }
 
   showLogin() {
