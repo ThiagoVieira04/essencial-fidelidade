@@ -104,26 +104,53 @@ class AdminManagerSupabase {
     }
   }
 
-  handleLogin(e) {
+  async handleLogin(e) {
     e.preventDefault();
     const username = document.getElementById('admin-username').value.trim();
     const password = document.getElementById('admin-password').value.trim();
+    const submitBtn = this.loginForm.querySelector('button[type="submit"]');
     
-    const usernameValidation = Utils.validateName(username);
-    const passwordValidation = Utils.validatePassword(password);
-    
-    if (!usernameValidation.valid || !passwordValidation.valid) {
-      Utils.showToast('Preencha os campos corretamente', 'error');
+    // Validações básicas
+    if (!username || !password) {
+      Utils.showToast('Preencha todos os campos', 'error');
       return;
     }
     
-    if (username === this.ADMIN_CREDENTIALS.username && password === this.ADMIN_CREDENTIALS.password) {
-      this.currentUser = { username };
-      sessionStorage.setItem('adminUser', JSON.stringify(this.currentUser));
-      this.showDashboard();
-      Utils.showToast('Bem-vindo, Administrador!', 'success');
-    } else {
-      Utils.showToast('Credenciais inválidas!', 'error');
+    if (username.length < 2) {
+      Utils.showToast('Usuário inválido', 'error');
+      return;
+    }
+    
+    if (password.length < 6) {
+      Utils.showToast('Senha deve ter pelo menos 6 caracteres', 'error');
+      return;
+    }
+    
+    // Loading state
+    Utils.showLoading(submitBtn, true);
+    
+    try {
+      // Autentica via banco de dados (com fallback)
+      const admin = await Database.authenticateAdmin(username, password);
+      
+      if (admin) {
+        this.currentUser = { username: admin.username, id: admin.id };
+        sessionStorage.setItem('adminUser', JSON.stringify(this.currentUser));
+        
+        // Atualiza credenciais em memória
+        this.ADMIN_CREDENTIALS.username = admin.username;
+        this.ADMIN_CREDENTIALS.password = password;
+        
+        await this.showDashboard();
+        Utils.showToast('Bem-vindo, Administrador!', 'success');
+      } else {
+        Utils.showToast('Usuário ou senha incorretos', 'error');
+      }
+    } catch (error) {
+      console.error('Erro no login:', error);
+      Utils.showToast('Erro ao fazer login. Tente novamente.', 'error');
+    } finally {
+      Utils.showLoading(submitBtn, false);
     }
   }
 
@@ -545,34 +572,52 @@ class AdminManagerSupabase {
     }
   }
 
-  handleChangePassword(e) {
+  async handleChangePassword(e) {
     e.preventDefault();
     
     const currentPassword = document.getElementById('current-password').value.trim();
     const newPassword = document.getElementById('new-password').value.trim();
     const confirmPassword = document.getElementById('confirm-password').value.trim();
+    const submitBtn = this.changePasswordForm.querySelector('button[type="submit"]');
     
+    // Valida senha atual
     if (currentPassword !== this.ADMIN_CREDENTIALS.password) {
       Utils.showToast('Senha atual incorreta!', 'error');
       return;
     }
     
+    // Valida nova senha
     const passwordValidation = Utils.validatePassword(newPassword);
     if (!passwordValidation.valid) {
       Utils.showToast(passwordValidation.error, 'error');
       return;
     }
     
+    // Valida confirmação
     if (newPassword !== confirmPassword) {
       Utils.showToast('As senhas não coincidem!', 'error');
       return;
     }
     
-    this.ADMIN_CREDENTIALS.password = newPassword;
-    localStorage.setItem('adminPassword', newPassword);
+    // Loading state
+    Utils.showLoading(submitBtn, true);
     
-    this.changePasswordForm.reset();
-    Utils.showToast('Senha alterada com sucesso!', 'success');
+    try {
+      // Atualiza no banco (com fallback para localStorage)
+      const username = this.currentUser?.username || 'admin';
+      await Database.updateAdminPassword(username, newPassword);
+      
+      // Atualiza em memória
+      this.ADMIN_CREDENTIALS.password = newPassword;
+      
+      this.changePasswordForm.reset();
+      Utils.showToast('Senha alterada com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao alterar senha:', error);
+      Utils.showToast('Erro ao alterar senha. Tente novamente.', 'error');
+    } finally {
+      Utils.showLoading(submitBtn, false);
+    }
   }
 }
 

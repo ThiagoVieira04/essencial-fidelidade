@@ -161,4 +161,106 @@ class Database {
       return { totalUsers: 0, totalStamps: 0, completedCards: 0 };
     }
   }
+
+  // ========== MÉTODOS DE AUTENTICAÇÃO ADMIN ==========
+  
+  /**
+   * Autentica administrador
+   * @param {string} username - Nome de usuário
+   * @param {string} password - Senha
+   * @returns {Promise<Object|null>} Dados do admin ou null
+   */
+  static async authenticateAdmin(username, password) {
+    try {
+      // Tenta buscar na tabela admins (se existir)
+      const { data, error } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('username', username)
+        .eq('password', password)
+        .single();
+      
+      if (error) {
+        // Se tabela não existe, usa fallback hardcoded
+        if (error.code === 'PGRST116' || error.code === '42P01') {
+          console.warn('Tabela admins não encontrada, usando credenciais hardcoded');
+          return this.authenticateAdminFallback(username, password);
+        }
+        throw error;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Erro ao autenticar admin:', error);
+      // Fallback para credenciais hardcoded
+      return this.authenticateAdminFallback(username, password);
+    }
+  }
+
+  /**
+   * Fallback: Autentica com credenciais hardcoded
+   * @param {string} username
+   * @param {string} password
+   * @returns {Object|null}
+   */
+  static authenticateAdminFallback(username, password) {
+    const storedPassword = localStorage.getItem('adminPassword') || 'admin123';
+    
+    if (username === 'admin' && password === storedPassword) {
+      return {
+        id: 1,
+        username: 'admin',
+        created_at: new Date().toISOString()
+      };
+    }
+    
+    return null;
+  }
+
+  /**
+   * Atualiza senha do administrador
+   * @param {string} username
+   * @param {string} newPassword
+   * @returns {Promise<boolean>}
+   */
+  static async updateAdminPassword(username, newPassword) {
+    try {
+      const { data, error } = await supabase
+        .from('admins')
+        .update({ password: newPassword, updated_at: new Date().toISOString() })
+        .eq('username', username)
+        .select();
+      
+      if (error) {
+        // Se tabela não existe, salva no localStorage
+        if (error.code === 'PGRST116' || error.code === '42P01') {
+          localStorage.setItem('adminPassword', newPassword);
+          return true;
+        }
+        throw error;
+      }
+      
+      // Atualiza também no localStorage para compatibilidade
+      localStorage.setItem('adminPassword', newPassword);
+      return true;
+    } catch (error) {
+      console.error('Erro ao atualizar senha admin:', error);
+      // Fallback: salva apenas no localStorage
+      localStorage.setItem('adminPassword', newPassword);
+      return true;
+    }
+  }
+
+  /**
+   * Verifica se tabela admins existe
+   * @returns {Promise<boolean>}
+   */
+  static async checkAdminTableExists() {
+    try {
+      const { error } = await supabase.from('admins').select('id').limit(1);
+      return !error || error.code !== '42P01';
+    } catch (error) {
+      return false;
+    }
+  }
 }
