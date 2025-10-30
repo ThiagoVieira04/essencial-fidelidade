@@ -19,6 +19,12 @@ android/local.properties
 .env
 .env.local
 .env.production
+.env.development
+
+# Sensitive files (IMPORTANTE: Não commitar credenciais)
+# config.js deve ser movido para .env em produção
+# Front-end/public/config.js
+# www/config.js
 
 # IDE
 .vscode/

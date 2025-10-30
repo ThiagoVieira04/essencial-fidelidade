@@ -42,45 +42,94 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
     
-    const registerUser = async (name, phone, password) => {
+    const registerUser = async (name, phone, password, submitBtn) => {
+        // Validações
+        const nameValidation = Utils.validateName(name);
+        if (!nameValidation.valid) {
+            Utils.showToast(nameValidation.error, 'error');
+            return;
+        }
+        
+        const phoneValidation = Utils.validatePhone(phone);
+        if (!phoneValidation.valid) {
+            Utils.showToast(phoneValidation.error, 'error');
+            return;
+        }
+        
+        const passwordValidation = Utils.validatePassword(password);
+        if (!passwordValidation.valid) {
+            Utils.showToast(passwordValidation.error, 'error');
+            return;
+        }
+        
+        Utils.showLoading(submitBtn, true);
+        
         try {
             const users = await Database.getUsers();
-            if (users.find(user => user.name.toLowerCase() === name.toLowerCase())) {
-                alert('Usuário com este nome já existe.');
+            if (users.find(user => user.name.toLowerCase() === nameValidation.value.toLowerCase())) {
+                Utils.showToast('Usuário com este nome já existe', 'error');
                 return;
             }
             
-            await Database.createUser({ name, phone, password });
-            alert('Cadastro realizado com sucesso!');
+            await Database.createUser({ 
+                name: nameValidation.value, 
+                phone: phoneValidation.value, 
+                password: passwordValidation.value 
+            });
+            
+            Utils.showToast('Cadastro realizado com sucesso!', 'success');
             showView(loginView);
             registerForm.reset();
         } catch (error) {
-            alert('Erro ao cadastrar: ' + error.message);
+            console.error('Erro no cadastro:', error);
+            Utils.showToast(error.message || 'Erro ao cadastrar', 'error');
+        } finally {
+            Utils.showLoading(submitBtn, false);
         }
     };
 
-    const loginUser = async (name, password) => {
-        if (name === ADMIN_USER && password === ADMIN_PASS) {
-            currentUser = { name: ADMIN_USER };
-            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-            window.location.href = 'admin.html';
+    const loginUser = async (name, password, submitBtn) => {
+        const nameValidation = Utils.validateName(name);
+        const passwordValidation = Utils.validatePassword(password);
+        
+        if (!nameValidation.valid || !passwordValidation.valid) {
+            Utils.showToast('Preencha os campos corretamente', 'error');
             return;
         }
-
+        
+        Utils.showLoading(submitBtn, true);
+        
         try {
+            // Admin login
+            if (nameValidation.value === ADMIN_USER && passwordValidation.value === ADMIN_PASS) {
+                currentUser = { name: ADMIN_USER };
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            // User login
             const users = await Database.getUsers();
-            const user = users.find(u => u.name.toLowerCase() === name.toLowerCase() && u.password === password);
+            const user = users.find(u => 
+                u.name.toLowerCase() === nameValidation.value.toLowerCase() && 
+                u.password === passwordValidation.value
+            );
+            
             if (user) {
                 currentUser = user;
                 sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 await renderCardView();
+                Utils.showToast(`Bem-vindo, ${user.name}!`, 'success');
             } else {
-                alert('Nome ou senha inválidos.');
+                Utils.showToast('Nome ou senha inválidos', 'error');
             }
         } catch (error) {
-            alert('Erro ao fazer login: ' + error.message);
+            console.error('Erro no login:', error);
+            Utils.showToast(error.message || 'Erro ao fazer login', 'error');
+        } finally {
+            Utils.showLoading(submitBtn, false);
+            loginForm.reset();
         }
-        loginForm.reset();
     };
 
     const logout = () => {
@@ -95,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error('Elementos não encontrados');
             }
             
-            welcomeMessage.textContent = currentUser.name;
+            welcomeMessage.textContent = Utils.sanitizeHTML(currentUser.name);
             userStamps = await Database.getUserStamps(currentUser.id);
             
             stampGrid.innerHTML = '';
@@ -103,41 +152,60 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const stampsCount = userStamps.length;
             
+            // Criar fragmento para melhor performance
+            const fragment = document.createDocumentFragment();
+            
             for (let i = 0; i < 10; i++) {
                 const stamp = document.createElement('div');
                 stamp.classList.add('stamp');
+                stamp.setAttribute('aria-label', `Selo ${i + 1}`);
+                
                 if (i < stampsCount) {
                     stamp.classList.add('filled');
                     const stampData = userStamps[i];
                     const date = new Date(stampData.created_at);
                     stamp.innerHTML = `<span>${date.toLocaleDateString('pt-BR')}</span><span>${date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</span>`;
+                    stamp.setAttribute('aria-label', `Selo ${i + 1} preenchido em ${date.toLocaleDateString('pt-BR')}`);
                 }
-                stampGrid.appendChild(stamp);
+                fragment.appendChild(stamp);
             }
+            
+            stampGrid.appendChild(fragment);
 
             if (stampsCount >= 10) {
                 if (addStampButton) addStampButton.style.display = 'none';
                 rewardMessage.style.display = 'block';
+                rewardMessage.setAttribute('role', 'alert');
             } else {
                 if (addStampButton) addStampButton.style.display = 'block';
             }
 
             showView(cardView);
         } catch (error) {
-            alert('Erro ao carregar cartão: ' + error.message);
+            console.error('Erro ao renderizar cartão:', error);
+            Utils.showToast(error.message || 'Erro ao carregar cartão', 'error');
         }
     };
 
     const addStamp = async () => {
-        if (userStamps.length >= 10) return;
+        if (userStamps.length >= 10) {
+            Utils.showToast('Cartão já está completo!', 'warning');
+            return;
+        }
 
+        if (addStampButton) Utils.showLoading(addStampButton, true);
+        
         try {
             await Database.addStamp(currentUser.id, {
                 created_at: new Date().toISOString()
             });
             await renderCardView();
+            Utils.showToast('Selo adicionado com sucesso!', 'success');
         } catch (error) {
-            alert('Erro ao adicionar selo: ' + error.message);
+            console.error('Erro ao adicionar selo:', error);
+            Utils.showToast(error.message || 'Erro ao adicionar selo', 'error');
+        } finally {
+            if (addStampButton) Utils.showLoading(addStampButton, false);
         }
     };
 
@@ -158,10 +226,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const name = inputs[0].value.trim();
         const phone = inputs[1].value.trim();
         const password = inputs[2].value.trim();
+        const submitBtn = registerForm.querySelector('button[type="submit"]');
+        
         if (name && phone && password) {
-            registerUser(name, phone, password);
+            registerUser(name, phone, password, submitBtn);
         } else {
-            alert('Por favor, preencha todos os campos.');
+            Utils.showToast('Por favor, preencha todos os campos', 'warning');
         }
     });
     
@@ -170,10 +240,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const inputs = loginForm.querySelectorAll('input');
         const name = inputs[0].value.trim();
         const password = inputs[1].value.trim();
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        
         if (name && password) {
-            loginUser(name, password);
+            loginUser(name, password, submitBtn);
         } else {
-            alert('Por favor, preencha todos os campos.');
+            Utils.showToast('Por favor, preencha todos os campos', 'warning');
         }
     });
 

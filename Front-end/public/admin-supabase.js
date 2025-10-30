@@ -53,7 +53,7 @@ class AdminManagerSupabase {
     this.clientForm.addEventListener('submit', (e) => this.handleClientSubmit(e));
     this.closeModal.addEventListener('click', () => this.closeClientModal());
     this.cancelClientBtn.addEventListener('click', () => this.closeClientModal());
-    this.clientSearch.addEventListener('input', (e) => this.filterClients(e.target.value));
+    this.clientSearch.addEventListener('input', Utils.debounce(() => this.filterClients(), 300));
     this.clientsList.addEventListener('click', (e) => this.handleClientAction(e));
     this.clientSelect.addEventListener('change', (e) => this.selectClientForStamps(e.target.value));
     
@@ -109,12 +109,21 @@ class AdminManagerSupabase {
     const username = document.getElementById('admin-username').value.trim();
     const password = document.getElementById('admin-password').value.trim();
     
+    const usernameValidation = Utils.validateName(username);
+    const passwordValidation = Utils.validatePassword(password);
+    
+    if (!usernameValidation.valid || !passwordValidation.valid) {
+      Utils.showToast('Preencha os campos corretamente', 'error');
+      return;
+    }
+    
     if (username === this.ADMIN_CREDENTIALS.username && password === this.ADMIN_CREDENTIALS.password) {
       this.currentUser = { username };
       sessionStorage.setItem('adminUser', JSON.stringify(this.currentUser));
       this.showDashboard();
+      Utils.showToast('Bem-vindo, Administrador!', 'success');
     } else {
-      alert('Credenciais inválidas!');
+      Utils.showToast('Credenciais inválidas!', 'error');
     }
   }
 
@@ -154,6 +163,7 @@ class AdminManagerSupabase {
       this.clients = await Database.getUsers();
     } catch (error) {
       console.error('Erro ao carregar clientes:', error);
+      Utils.showToast('Erro ao carregar clientes', 'error');
       this.clients = [];
     }
   }
@@ -172,14 +182,21 @@ class AdminManagerSupabase {
   createClientCard(client, stampsCount) {
     const card = document.createElement('div');
     card.className = 'client-card';
+    card.setAttribute('role', 'article');
+    card.setAttribute('aria-label', `Cliente ${client.name}`);
+    
+    const safeName = Utils.sanitizeHTML(client.name);
+    const safeEmail = Utils.sanitizeHTML(client.email || 'Não informado');
+    const formattedPhone = Utils.formatPhone(client.phone);
+    
     card.innerHTML = `
-      <h4>${client.name}</h4>
-      <p><strong>E-mail:</strong> ${client.email || 'Não informado'}</p>
-      <p><strong>Telefone:</strong> ${client.phone}</p>
+      <h4>${safeName}</h4>
+      <p><strong>E-mail:</strong> ${safeEmail}</p>
+      <p><strong>Telefone:</strong> ${formattedPhone}</p>
       <p><strong>Selos:</strong> ${stampsCount}/10</p>
       <div class="client-actions">
-        <button class="edit-btn" data-action="edit" data-id="${client.id}">Editar</button>
-        <button class="delete-btn" data-action="delete" data-id="${client.id}">Excluir</button>
+        <button class="edit-btn" data-action="edit" data-id="${client.id}" aria-label="Editar ${safeName}">Editar</button>
+        <button class="delete-btn" data-action="delete" data-id="${client.id}" aria-label="Excluir ${safeName}">Excluir</button>
       </div>
     `;
     return card;
@@ -195,6 +212,7 @@ class AdminManagerSupabase {
   }
 
   filterClients() {
+    // Debounce aplicado no bindEvents
     this.renderClients();
   }
 
@@ -298,31 +316,66 @@ class AdminManagerSupabase {
   }
 
   async createClient(clientData) {
-    const existingClient = this.clients.find(c => 
-      c.name.toLowerCase() === clientData.name.toLowerCase() ||
-      (clientData.email && c.email === clientData.email)
-    );
-    
-    if (existingClient) {
-      alert('Cliente com este nome ou e-mail já existe!');
+    // Validações
+    const nameValidation = Utils.validateName(clientData.name);
+    if (!nameValidation.valid) {
+      Utils.showToast(nameValidation.error, 'error');
       return;
     }
     
-    await Database.createUser(clientData);
-    await this.loadClients();
-    this.renderClients();
-    this.populateClientSelect();
-    this.closeClientModal();
-    alert('Cliente cadastrado com sucesso!');
+    const phoneValidation = Utils.validatePhone(clientData.phone);
+    if (!phoneValidation.valid) {
+      Utils.showToast(phoneValidation.error, 'error');
+      return;
+    }
+    
+    const passwordValidation = Utils.validatePassword(clientData.password);
+    if (!passwordValidation.valid) {
+      Utils.showToast(passwordValidation.error, 'error');
+      return;
+    }
+    
+    if (clientData.email) {
+      const emailValidation = Utils.validateEmail(clientData.email);
+      if (!emailValidation.valid) {
+        Utils.showToast(emailValidation.error, 'error');
+        return;
+      }
+    }
+    
+    const existingClient = this.clients.find(c => 
+      c.name.toLowerCase() === nameValidation.value.toLowerCase() ||
+      (clientData.email && c.email === clientData.email.toLowerCase())
+    );
+    
+    if (existingClient) {
+      Utils.showToast('Cliente com este nome ou e-mail já existe!', 'error');
+      return;
+    }
+    
+    try {
+      await Database.createUser(clientData);
+      await this.loadClients();
+      this.renderClients();
+      this.populateClientSelect();
+      this.closeClientModal();
+      Utils.showToast('Cliente cadastrado com sucesso!', 'success');
+    } catch (error) {
+      Utils.showToast(error.message || 'Erro ao cadastrar cliente', 'error');
+    }
   }
 
   async updateClient(clientId, clientData) {
-    await Database.updateUser(clientId, clientData);
-    await this.loadClients();
-    this.renderClients();
-    this.populateClientSelect();
-    this.closeClientModal();
-    alert('Cliente atualizado com sucesso!');
+    try {
+      await Database.updateUser(clientId, clientData);
+      await this.loadClients();
+      this.renderClients();
+      this.populateClientSelect();
+      this.closeClientModal();
+      Utils.showToast('Cliente atualizado com sucesso!', 'success');
+    } catch (error) {
+      Utils.showToast(error.message || 'Erro ao atualizar cliente', 'error');
+    }
   }
 
   editClient(clientId) {
@@ -333,12 +386,16 @@ class AdminManagerSupabase {
   }
 
   async deleteClient(clientId) {
-    if (confirm('Tem certeza que deseja excluir este cliente?')) {
-      await Database.deleteUser(clientId);
-      await this.loadClients();
-      this.renderClients();
-      this.populateClientSelect();
-      alert('Cliente excluído com sucesso!');
+    if (confirm('Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.')) {
+      try {
+        await Database.deleteUser(clientId);
+        await this.loadClients();
+        this.renderClients();
+        this.populateClientSelect();
+        Utils.showToast('Cliente excluído com sucesso!', 'success');
+      } catch (error) {
+        Utils.showToast(error.message || 'Erro ao excluir cliente', 'error');
+      }
     }
   }
 
@@ -399,14 +456,16 @@ class AdminManagerSupabase {
 
   async addStamp() {
     if (!this.selectedClient) {
-      alert('Selecione um cliente primeiro!');
+      Utils.showToast('Selecione um cliente primeiro!', 'warning');
       return;
     }
+    
+    if (this.addStampBtn) Utils.showLoading(this.addStampBtn, true);
     
     try {
       const stamps = await Database.getUserStamps(this.selectedClient.id);
       if (stamps.length >= 10) {
-        alert('Este cliente já possui o cartão completo!');
+        Utils.showToast('Este cliente já possui o cartão completo!', 'warning');
         return;
       }
       
@@ -416,39 +475,57 @@ class AdminManagerSupabase {
       
       await this.updateStampsDisplay();
       await this.populateClientSelect();
-      alert('Selo adicionado com sucesso!');
+      Utils.showToast('Selo adicionado com sucesso!', 'success');
     } catch (error) {
       console.error('Erro ao adicionar selo:', error);
-      alert('Erro ao adicionar selo: ' + error.message);
+      Utils.showToast(error.message || 'Erro ao adicionar selo', 'error');
+    } finally {
+      if (this.addStampBtn) Utils.showLoading(this.addStampBtn, false);
     }
   }
 
   async removeStamp() {
     if (!this.selectedClient) return;
     
-    const stamps = await Database.getUserStamps(this.selectedClient.id);
-    if (!stamps.length) {
-      alert('Este cliente não possui selos para remover!');
-      return;
-    }
-    
-    if (confirm('Tem certeza que deseja remover o último selo?')) {
-      const lastStamp = stamps[stamps.length - 1];
-      await Database.deleteStamp(lastStamp.id);
-      await this.updateStampsDisplay();
-      this.populateClientSelect();
-      alert('Selo removido com sucesso!');
+    try {
+      const stamps = await Database.getUserStamps(this.selectedClient.id);
+      if (!stamps.length) {
+        Utils.showToast('Este cliente não possui selos para remover!', 'warning');
+        return;
+      }
+      
+      if (confirm('Tem certeza que deseja remover o último selo?')) {
+        if (this.removeStampBtn) Utils.showLoading(this.removeStampBtn, true);
+        
+        const lastStamp = stamps[stamps.length - 1];
+        await Database.deleteStamp(lastStamp.id);
+        await this.updateStampsDisplay();
+        this.populateClientSelect();
+        Utils.showToast('Selo removido com sucesso!', 'success');
+      }
+    } catch (error) {
+      Utils.showToast(error.message || 'Erro ao remover selo', 'error');
+    } finally {
+      if (this.removeStampBtn) Utils.showLoading(this.removeStampBtn, false);
     }
   }
 
   async resetStamps() {
     if (!this.selectedClient) return;
     
-    if (confirm(`Tem certeza que deseja resetar todos os selos de ${this.selectedClient.name}?`)) {
-      await Database.resetUserStamps(this.selectedClient.id);
-      await this.updateStampsDisplay();
-      this.populateClientSelect();
-      alert('Cartão resetado com sucesso!');
+    if (confirm(`Tem certeza que deseja resetar todos os selos de ${this.selectedClient.name}? Esta ação não pode ser desfeita.`)) {
+      if (this.resetStampsBtn) Utils.showLoading(this.resetStampsBtn, true);
+      
+      try {
+        await Database.resetUserStamps(this.selectedClient.id);
+        await this.updateStampsDisplay();
+        this.populateClientSelect();
+        Utils.showToast('Cartão resetado com sucesso!', 'success');
+      } catch (error) {
+        Utils.showToast(error.message || 'Erro ao resetar cartão', 'error');
+      } finally {
+        if (this.resetStampsBtn) Utils.showLoading(this.resetStampsBtn, false);
+      }
     }
   }
 
@@ -476,17 +553,18 @@ class AdminManagerSupabase {
     const confirmPassword = document.getElementById('confirm-password').value.trim();
     
     if (currentPassword !== this.ADMIN_CREDENTIALS.password) {
-      alert('Senha atual incorreta!');
+      Utils.showToast('Senha atual incorreta!', 'error');
       return;
     }
     
-    if (newPassword.length < 6) {
-      alert('A nova senha deve ter pelo menos 6 caracteres!');
+    const passwordValidation = Utils.validatePassword(newPassword);
+    if (!passwordValidation.valid) {
+      Utils.showToast(passwordValidation.error, 'error');
       return;
     }
     
     if (newPassword !== confirmPassword) {
-      alert('As senhas não coincidem!');
+      Utils.showToast('As senhas não coincidem!', 'error');
       return;
     }
     
@@ -494,7 +572,7 @@ class AdminManagerSupabase {
     localStorage.setItem('adminPassword', newPassword);
     
     this.changePasswordForm.reset();
-    alert('Senha alterada com sucesso!');
+    Utils.showToast('Senha alterada com sucesso!', 'success');
   }
 }
 

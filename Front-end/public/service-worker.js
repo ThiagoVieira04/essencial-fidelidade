@@ -1,4 +1,4 @@
-const CACHE_NAME = 'essencial-fidelidade-v2.9';
+const CACHE_NAME = 'essencial-fidelidade-v3.0';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,10 +6,12 @@ const urlsToCache = [
   '/style.css',
   '/admin.css',
   '/theme.css',
+  '/toast.css',
   '/script-supabase.js',
   '/admin-supabase.js',
   '/theme.js',
   '/config.js',
+  '/utils.js',
   '/manifest.json',
   '/assets/logo.png',
   '/assets/shirley logo (1).png',
