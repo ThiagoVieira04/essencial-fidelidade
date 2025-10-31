@@ -256,8 +256,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const toggleLoginPassword = document.getElementById('toggle-login-password');
     
     if (toggleLoginPassword) {
-        toggleLoginPassword.addEventListener('touchstart', function(event) {
-            event.stopPropagation();
+        const togglePasswordHandler = function(event) {
+            if (event.type === 'touchstart') event.stopPropagation();
             
             const passwordInput = toggleLoginPassword.parentElement.querySelector('input[type="password"], input[type="text"]');
             const eyeIcon = toggleLoginPassword.querySelector('.eye-icon');
@@ -273,15 +273,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     toggleLoginPassword.setAttribute('aria-label', 'Mostrar senha');
                 }
             }
-        }, { passive: true });
+        };
+        
+        toggleLoginPassword.addEventListener('click', togglePasswordHandler);
+        toggleLoginPassword.addEventListener('touchstart', togglePasswordHandler, { passive: true });
     }
 
     // Toggle password visibility - Cadastro
     const toggleRegisterPassword = document.getElementById('toggle-register-password');
     
     if (toggleRegisterPassword) {
-        toggleRegisterPassword.addEventListener('touchstart', function(event) {
-            event.stopPropagation();
+        const togglePasswordHandler = function(event) {
+            if (event.type === 'touchstart') event.stopPropagation();
             
             const passwordInput = toggleRegisterPassword.parentElement.querySelector('input[type="password"], input[type="text"]');
             const eyeIcon = toggleRegisterPassword.querySelector('.eye-icon');
@@ -297,7 +300,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     toggleRegisterPassword.setAttribute('aria-label', 'Mostrar senha');
                 }
             }
-        }, { passive: true });
+        };
+        
+        toggleRegisterPassword.addEventListener('click', togglePasswordHandler);
+        toggleRegisterPassword.addEventListener('touchstart', togglePasswordHandler, { passive: true });
     }
 
     await init();
