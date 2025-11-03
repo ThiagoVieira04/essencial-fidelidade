@@ -586,6 +586,8 @@
   margin-bottom: 0;
   width: 100%;
   box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 .password-toggle {
@@ -598,9 +600,9 @@
   cursor: pointer;
   padding: 8px;
   font-size: 1.2rem;
-  color: var(--border-color);
+  color: var(--gray-border);
   transition: color 0.3s;
-  z-index: 1;
+  z-index: 10;
   pointer-events: auto;
   width: 40px;
   height: 40px;
@@ -612,6 +614,10 @@
 .password-toggle:hover {
   color: var(--dark-green);
   background: none !important;
+}
+
+.password-toggle:active {
+  transform: translateY(-50%) scale(0.95);
 }
 
 .eye-icon {
