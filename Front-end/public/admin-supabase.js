@@ -172,11 +172,8 @@ class AdminManagerSupabase {
   }
 
   handleBackToSite(e) {
-    // Limpar sessão admin antes de navegar
-    this.currentUser = null;
     sessionStorage.removeItem('adminUser');
-    // Permitir navegação padrão do link
-    // Não precisa e.preventDefault() pois queremos que o link funcione
+    sessionStorage.removeItem('currentUser');
   }
 
   showLogin() {
