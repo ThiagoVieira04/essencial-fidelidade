@@ -1,7 +1,7 @@
 {
   "appId": "com.essencial.fidelidade",
   "appName": "Essencial Fidelidade",
-  "webDir": "Front-end/public",
+  "webDir": "www",
   "bundledWebRuntime": false,
   "plugins": {
     "SplashScreen": {
