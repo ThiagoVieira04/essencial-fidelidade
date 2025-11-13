@@ -185,6 +185,7 @@ a:active {
     border: 2px dashed var(--gray-border);
     border-radius: 50%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     font-size: 0.5rem;
