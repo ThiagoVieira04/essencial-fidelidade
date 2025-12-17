@@ -637,6 +637,18 @@ class AdminManagerSupabase {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Aguardar Database estar disponível
+  let attempts = 0;
+  while (!Database && attempts < 50) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    attempts++;
+  }
+  
+  if (!Database) {
+    Utils.showToast('Erro de configuração. Recarregue a página.', 'error');
+    return;
+  }
+  
   new AdminManagerSupabase();
 });

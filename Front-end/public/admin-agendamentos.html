@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Agendamentos</title>
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: 0.3s; margin-left: 5px; }
+        .btn-primary { background: #3a7a44; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; background: white; border: none; border-radius: 5px; cursor: pointer; }
+        .tab.active { background: #3a7a44; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .appointment-item { border-left: 4px solid #3a7a44; padding: 15px; margin-bottom: 10px; background: #f8f9fa; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .appointment-item.cancelled { border-left-color: #dc3545; opacity: 0.7; }
+        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 3px; font-size: 12px; font-weight: bold; }
+        .status-pending { background: #ffc107; color: #000; }
+        .status-confirmed { background: #28a745; color: white; }
+        .status-cancelled { background: #dc3545; color: white; }
+        .status-completed { background: #6c757d; color: white; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background: white; max-width: 500px; margin: 50px auto; padding: 30px; border-radius: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .blocked-item { background: #ffe0e0; padding: 10px; margin-bottom: 10px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; }
+        .filter-bar input, .filter-bar select { padding: 8px; border: 1px solid #ddd; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Admin - Agendamentos</h1>
+            <div>
+                <button class="btn btn-secondary" onclick="window.location.href='admin.html'">Voltar ao Admin</button>
+                <button class="btn btn-secondary" onclick="logout()">Sair</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('all')">Todos Agendamentos</button>
+            <button class="tab" onclick="switchTab('blocked')">Horários Bloqueados</button>
+        </div>
+
+        <!-- Tab: Todos Agendamentos -->
+        <div id="allTab" class="tab-content active">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>Todos os Agendamentos</h2>
+                    <div class="filter-bar">
+                        <input type="date" id="filterDate" onchange="loadAllAppointments()">
+                        <select id="filterStatus" onchange="loadAllAppointments()">
+                            <option value="">Todos Status</option>
+                            <option value="pending">Pendente</option>
+                            <option value="confirmed">Confirmado</option>
+                            <option value="cancelled">Cancelado</option>
+                            <option value="completed">Concluído</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="allAppointmentsList"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Horários Bloqueados -->
+        <div id="blockedTab" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>Horários Bloqueados</h2>
+                    <button class="btn btn-primary" onclick="showBlockModal()">+ Bloquear Horário</button>
+                </div>
+                <div id="blockedSlotsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Bloquear Horário -->
+    <div id="blockModal" class="modal">
+        <div class="modal-content">
+            <h2>Bloquear Horário</h2>
+            <form id="blockForm">
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="blockDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Horário</label>
+                    <select id="blockTime" required>
+                        <option value="">Selecione...</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="12:00">12:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                        <option value="18:00">18:00</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Motivo (opcional)</label>
+                    <input type="text" id="blockReason" placeholder="Ex: Feriado, Manutenção...">
+                </div>
+                <button type="submit" class="btn btn-primary">Bloquear</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="admin-agendamento.js"></script>
+</body>
+</html>

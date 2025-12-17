@@ -12,6 +12,7 @@ Um sistema completo de fidelização digital que permite aos clientes acumular s
 📱 **App Nativo**: APK para Android com Capacitor  
 🌐 **PWA Completo**: Funciona offline e pode ser instalado  
 🔒 **Painel Admin**: Gerenciamento completo de clientes e selos  
+📅 **Sistema de Agendamento**: Módulo completo de agendamentos (NOVO!)  
 ☁️ **Banco Real**: Integração com Supabase (PostgreSQL)  
 🎨 **UI Moderna**: Interface responsiva e intuitiva  
 🌙 **Dark Mode**: Tema claro/escuro com persistência local  
@@ -34,6 +35,9 @@ Um sistema completo de fidelização digital que permite aos clientes acumular s
 - ✅ Cadastro e login seguro
 - ✅ Cartão digital com 10 espaços para selos
 - ✅ Notificação automática de recompensa
+- ✅ **Sistema de agendamento online** (NOVO!)
+- ✅ **Visualizar e cancelar agendamentos** (NOVO!)
+- ✅ **Lembretes automáticos** (NOVO!)
 - ✅ Interface otimizada para mobile
 - ✅ Funciona offline (PWA)
 - ✅ Dark Mode / Light Mode
@@ -43,6 +47,9 @@ Um sistema completo de fidelização digital que permite aos clientes acumular s
 - ✅ Gerenciamento de clientes (CRUD)
 - ✅ Adicionar/remover selos individualmente
 - ✅ Resetar cartões de fidelidade
+- ✅ **Gerenciar todos os agendamentos** (NOVO!)
+- ✅ **Confirmar/cancelar agendamentos** (NOVO!)
+- ✅ **Bloquear horários indisponíveis** (NOVO!)
 - ✅ Busca e filtros avançados
 - ✅ Dashboard em tempo real
 - ✅ Dark Mode / Light Mode
@@ -59,8 +66,13 @@ essencial-fidelidade/
 ├── 🌐 Front-end/public/        # Código fonte web
 │   ├── index.html              # Página principal
 │   ├── admin.html              # Painel administrativo
+│   ├── agendamentos.html       # Sistema de agendamento (NOVO!)
+│   ├── admin-agendamentos.html # Admin agendamentos (NOVO!)
 │   ├── script-supabase.js      # Lógica do cliente
 │   ├── admin-supabase.js       # Lógica do admin
+│   ├── agendamento.js          # Lógica agendamento (NOVO!)
+│   ├── admin-agendamento.js    # Lógica admin agend. (NOVO!)
+│   ├── notification-service.js # Sistema de lembretes (NOVO!)
 │   ├── config.js               # Configurações Supabase
 │   ├── theme.css               # Estilos Dark/Light Mode
 │   ├── theme.js                # Gerenciador de temas
@@ -68,7 +80,10 @@ essencial-fidelidade/
 ├── 📦 www/                     # Build para Capacitor
 ├── ⚙️ capacitor.config.json    # Configurações do app
 ├── 🗄️ supabase-setup.sql       # Schema do banco
-└── 📋 SETUP.md                 # Guia de instalação
+├── 🗄️ supabase-agendamento.sql # Schema agendamento (NOVO!)
+├── 📋 SETUP.md                 # Guia de instalação
+├── 📋 INSTALACAO-AGENDAMENTO.md # Guia agendamento (NOVO!)
+└── 📋 GUIA-AGENDAMENTO.md      # Guia de uso (NOVO!)
 ```
 
 ---
@@ -127,6 +142,8 @@ npx cap build android
 ```sql
 users (id, name, email, phone, password, created_at)
 stamps (id, user_id, created_at)
+appointments (id, user_id, service_name, appointment_date, appointment_time, status, notes) [NOVO!]
+blocked_slots (id, block_date, block_time, reason) [NOVO!]
 ```
 
 ### **Recursos Supabase**
@@ -197,7 +214,8 @@ npx cap build android --prod
 ## 📈 **Roadmap**
 
 - [x] 🌙 Modo escuro
-- [ ] 🔔 Notificações push
+- [x] 📅 Sistema de agendamento completo
+- [x] 🔔 Notificações locais (lembretes)
 - [ ] 📧 Integração com e-mail
 - [ ] 📊 Dashboard de analytics
 - [ ] 🎁 Sistema de cupons

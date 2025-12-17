@@ -1,14 +1,15 @@
 /**
- * Keep-Alive para Supabase
- * Mantém o projeto ativo fazendo pings periódicos
+ * Keep-Alive - Versão Final
  */
 
 async function keepSupabaseActive() {
   try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('count')
-      .limit(1);
+    if (!window.AppConfig?.supabase) {
+      console.log('⏳ Aguardando inicialização...');
+      return;
+    }
+    
+    const { data, error } = await window.AppConfig.supabase.from('users').select('count').limit(1);
     
     if (!error) {
       console.log('✓ Supabase ativo:', new Date().toISOString());
@@ -18,8 +19,13 @@ async function keepSupabaseActive() {
   }
 }
 
-// Executar a cada 6 dias (518400000 ms)
-setInterval(keepSupabaseActive, 6 * 24 * 60 * 60 * 1000);
+function startKeepAlive() {
+  if (window.AppConfig?.supabase) {
+    keepSupabaseActive();
+    setInterval(keepSupabaseActive, 6 * 24 * 60 * 60 * 1000);
+  } else {
+    setTimeout(startKeepAlive, 1000);
+  }
+}
 
-// Executar imediatamente ao carregar
-keepSupabaseActive();
+setTimeout(startKeepAlive, 2000);

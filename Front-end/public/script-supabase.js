@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Aguardar Database estar disponível
+    let attempts = 0;
+    while (!Database && attempts < 50) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+    }
+    
+    if (!Database) {
+        Utils.showToast('Erro de configuração. Recarregue a página.', 'error');
+        return;
+    }
     const loginView = document.getElementById('login-view');
     const registerView = document.getElementById('register-view');
     const cardView = document.getElementById('card-view');
@@ -28,7 +39,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         viewToShow.style.display = 'flex';
     };
 
-    const init = async () => {
+    
+
+const init = async () => {
         const user = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
         if (user) {
             currentUser = user;
