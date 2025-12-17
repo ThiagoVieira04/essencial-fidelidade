@@ -1,33 +1,29 @@
 /**
- * Configuração Supabase - Versão Final
+ * Configuração Supabase - Versão Final Corrigida
  */
 
 const SUPABASE_URL = 'https://crpewmsqskavzrfgmvkg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNycGV3bXNxc2thdnpyZmdtdmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyNTQ3MjEsImV4cCI6MjA3NjgzMDcyMX0.pLYdS9fNuicWZil6k5Fd8L_xI6s99tKfCUMxmNKgsSM';
 
-// Usar namespace para evitar conflitos
-window.AppConfig = {
-  supabase: null,
-  Database: null,
-  
-  init() {
-    if (window.supabase && !this.supabase) {
-      this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      this.createDatabase();
-      console.log('✅ App inicializado');
-    }
-  },
-  
-  createDatabase() {
-    this.Database = {
+// Usar variável local para evitar conflitos
+let supabaseClient = null;
+let Database = null;
+
+// Inicialização segura
+function initApp() {
+  if (window.supabase && !supabaseClient) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // Criar Database
+    Database = {
       async getUsers() {
-        const { data, error } = await window.AppConfig.supabase.from('users').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabaseClient.from('users').select('*').order('created_at', { ascending: false });
         if (error) throw error;
         return data || [];
       },
 
       async createUser(userData) {
-        const { data, error } = await window.AppConfig.supabase.from('users').insert([{
+        const { data, error } = await supabaseClient.from('users').insert([{
           name: userData.name.trim(),
           email: userData.email?.trim().toLowerCase() || null,
           phone: userData.phone.replace(/\D/g, ''),
@@ -49,18 +45,18 @@ window.AppConfig = {
         if (userData.phone) updateData.phone = userData.phone.replace(/\D/g, '');
         if (userData.password) updateData.password = userData.password;
         
-        const { data, error } = await window.AppConfig.supabase.from('users').update(updateData).eq('id', id).select();
+        const { data, error } = await supabaseClient.from('users').update(updateData).eq('id', id).select();
         if (error) throw error;
         return data[0];
       },
 
       async deleteUser(id) {
-        const { error } = await window.AppConfig.supabase.from('users').delete().eq('id', id);
+        const { error } = await supabaseClient.from('users').delete().eq('id', id);
         if (error) throw error;
       },
 
       async addStamp(userId, stampData) {
-        const { data, error } = await window.AppConfig.supabase.from('stamps').insert([{
+        const { data, error } = await supabaseClient.from('stamps').insert([{
           user_id: userId,
           ...stampData
         }]).select();
@@ -70,23 +66,23 @@ window.AppConfig = {
       },
 
       async getUserStamps(userId) {
-        const { data, error } = await window.AppConfig.supabase.from('stamps').select('*').eq('user_id', userId).order('created_at', { ascending: true });
+        const { data, error } = await supabaseClient.from('stamps').select('*').eq('user_id', userId).order('created_at', { ascending: true });
         if (error) throw error;
         return data || [];
       },
 
       async deleteStamp(stampId) {
-        const { error } = await window.AppConfig.supabase.from('stamps').delete().eq('id', stampId);
+        const { error } = await supabaseClient.from('stamps').delete().eq('id', stampId);
         if (error) throw error;
       },
 
       async resetUserStamps(userId) {
-        const { error } = await window.AppConfig.supabase.from('stamps').delete().eq('user_id', userId);
+        const { error } = await supabaseClient.from('stamps').delete().eq('user_id', userId);
         if (error) throw error;
       },
 
       async getUserByName(name) {
-        const { data, error } = await window.AppConfig.supabase.from('users').select('*').ilike('name', name).single();
+        const { data, error } = await supabaseClient.from('users').select('*').ilike('name', name).single();
         if (error && error.code !== 'PGRST116') throw error;
         return data;
       },
@@ -104,18 +100,16 @@ window.AppConfig = {
         return true;
       }
     };
+    
+    // Tornar disponível globalmente sem conflitos
+    window.Database = Database;
+    window.supabaseClient = supabaseClient;
+    
+    console.log('✅ App inicializado');
+    return true;
   }
-};
+  return false;
+}
 
-// Aliases globais para compatibilidade
-Object.defineProperty(window, 'Database', {
-  get() { return window.AppConfig.Database; }
-});
-
-Object.defineProperty(window, 'supabase', {
-  get() { return window.AppConfig.supabase; },
-  configurable: true
-});
-
-// Inicializar
-setTimeout(() => window.AppConfig.init(), 100);
+// Tentar inicializar
+setTimeout(initApp, 100);

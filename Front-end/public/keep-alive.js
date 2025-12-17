@@ -1,15 +1,15 @@
 /**
- * Keep-Alive - Versão Final
+ * Keep-Alive - Versão Corrigida
  */
 
 async function keepSupabaseActive() {
   try {
-    if (!window.AppConfig?.supabase) {
+    if (!window.supabaseClient) {
       console.log('⏳ Aguardando inicialização...');
       return;
     }
     
-    const { data, error } = await window.AppConfig.supabase.from('users').select('count').limit(1);
+    const { data, error } = await window.supabaseClient.from('users').select('count').limit(1);
     
     if (!error) {
       console.log('✓ Supabase ativo:', new Date().toISOString());
@@ -20,7 +20,7 @@ async function keepSupabaseActive() {
 }
 
 function startKeepAlive() {
-  if (window.AppConfig?.supabase) {
+  if (window.supabaseClient) {
     keepSupabaseActive();
     setInterval(keepSupabaseActive, 6 * 24 * 60 * 60 * 1000);
   } else {
