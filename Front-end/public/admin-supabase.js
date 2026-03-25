@@ -201,13 +201,26 @@ class AdminManagerSupabase {
     }
   }
 
-  async loadClients() {
-    try {
-      this.clients = await Database.getUsers();
-    } catch (error) {
-      console.error('Erro ao carregar clientes:', error);
-      Utils.showToast('Erro ao carregar clientes', 'error');
-      this.clients = [];
+  async loadClients(retries = 4, delayMs = 1200) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        this.clients = await Database.getUsers();
+        return;
+      } catch (error) {
+        console.error(`Erro ao carregar clientes (tentativa ${attempt}/${retries}):`, error);
+        const isPaused = error?.message?.toLowerCase().includes('paused') || error?.status === 503 || error?.status === 429;
+
+        if (attempt < retries && isPaused) {
+          Utils.showToast(`Supabase temporariamente indisponível. Tentando novamente (${attempt}/${retries})...`, 'warning');
+          await new Promise(r => setTimeout(r, delayMs));
+          delayMs *= 2;
+          continue;
+        }
+
+        Utils.showToast('Erro ao carregar clientes', 'error');
+        this.clients = [];
+        return;
+      }
     }
   }
 
